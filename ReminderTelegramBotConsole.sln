@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReminderTelegramBotConsole", "ReminderTelegramBotConsole\ReminderTelegramBotConsole.csproj", "{70B98870-25C5-44AC-B9BD-4FCEF47B71CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReminderBotCore", "ReminderBotCore\ReminderBotCore.csproj", "{AB56F018-0CB1-4B8F-BEA2-D340AFEB3E37}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70B98870-25C5-44AC-B9BD-4FCEF47B71CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70B98870-25C5-44AC-B9BD-4FCEF47B71CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70B98870-25C5-44AC-B9BD-4FCEF47B71CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70B98870-25C5-44AC-B9BD-4FCEF47B71CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB56F018-0CB1-4B8F-BEA2-D340AFEB3E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB56F018-0CB1-4B8F-BEA2-D340AFEB3E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB56F018-0CB1-4B8F-BEA2-D340AFEB3E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB56F018-0CB1-4B8F-BEA2-D340AFEB3E37}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF239E5F-3E7A-4DB6-B84C-E967FC8E9473}
+	EndGlobalSection
+EndGlobal
