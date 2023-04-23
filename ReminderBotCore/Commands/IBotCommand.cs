@@ -1,9 +1,10 @@
-﻿using ReminderBotCore.Models;
+﻿using ReminderBotCore.Commands;
+using ReminderBotCore.Models;
 
 namespace ReminderBotCore.Core.Commands
 {
     public interface IBotCommand
     {
-        public Task<string> Execute(ReminderChat chat);
+        public Task<UserBotCommandResult> ExecuteCommand(long chatId);
     }
 }

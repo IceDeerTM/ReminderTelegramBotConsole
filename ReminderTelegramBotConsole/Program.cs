@@ -17,7 +17,7 @@ namespace ReminderTelegramBotConsole
             IHostBuilder builder = Host.CreateDefaultBuilder().ConfigureServices((context, services) =>
             {
 
-                services.AddSingleton<IBotRepo, DBRepo>();
+                services.AddSingleton<IBotRepo, EFRepo>();
                 services.AddSingleton<ReminderUnitService>();
                 services.AddSingleton<ReminderChatService>();
                 services.AddSingleton<IFactoryBotCommand, FactoryBotCommand>();

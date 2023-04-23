@@ -7,6 +7,9 @@ using ReminderBotCore.Models;
 using ReminderBotCore.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
+using ReminderBotCore.Core.Commands;
+using ReminderBotCore.Commands;
 
 namespace ReminderTelegramBotConsole.Services
 {
@@ -24,134 +27,70 @@ namespace ReminderTelegramBotConsole.Services
         private List<ReminderChat> chats = new List<ReminderChat>();
         private ITelegramBotClient bot;
         private DateTime serverTime = DateTime.Now;
-        private ReminderChatService chatService;
-        private ReminderUnitService unitService;
         private ILogger? logger;
-        
+        private IFactoryBotCommand factoryBotCommand;
 
-        public TelegramBotService(IConfiguration configuration, ILogger logger, ReminderChatService chatService, ReminderUnitService unitService)
+
+        public TelegramBotService(IConfiguration configuration, ILogger logger, IFactoryBotCommand factoryBotCommand)
         {
             this.logger = logger;
             string botToken = "";
             this.logger?.LogInformation(configuration.ToString());
             bot = new TelegramBotClient(botToken);
-            this.chatService = chatService;
-            this.unitService = unitService;
         }
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             if (update != null)
+            {
                 Console.WriteLine(JsonSerializer.Serialize(update));
 
-            try
-            {
-                if (update?.Type == UpdateType.Message)
+                try
                 {
-                    var message = update.Message;
-
-                    if (message != null)
+                    if (update.Type == UpdateType.Message)
                     {
-                        var messageText = message.Text?.ToLower();
-                        var chat = chats.Where(item => item.ChatId == message.Chat.Id).FirstOrDefault();
-                        if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/start"))
+                        if (update.Message!= null) 
                         {
-                            if (chat == null)
+                            if (!string.IsNullOrEmpty(update.Message.Text))
                             {
-                                chats.Add(new ReminderChat(message.Chat.Id));
-                                await botClient.SendTextMessageAsync(message.Chat, "Чат добавлен в бота.");
-                            }
-                            else
-                            {
-                                if (chat.isActive == false)
+                                var chatId = update.Message.Chat.Id;
+                                var requestString = update.Message.Text.ToLower();
+
+                                IBotCommand botCommand = factoryBotCommand.CreateBotCommand(requestString);
+                                
+                                if (botCommand is BotCommandNotExist)
                                 {
-                                    chat.isActive = true;
-                                    await botClient.SendTextMessageAsync(message.Chat, "Чат активирован.");
+                                    // Поскольку данной команды нету в пуле команд бота, то мы можем либо сообщить юзеру об этом
+                                    // Либо же просто проигнорировать это и сделать return
+                                    return;
                                 }
-                                else await botClient.SendTextMessageAsync(message.Chat, "Уже активно.");
-
-                            }
-                            return;
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/defautl_settings"))
-                        {
-                            if (chat != null)
-                            {
-                                chatService.AddDefaultReminders(chat);
-                                await botClient.SendTextMessageAsync(message.Chat, "Дефолтные настройки отправки напоминаний применены.");
-                            }
-                            else await botClient.SendTextMessageAsync(message.Chat, "Неизвестная ошибка. Попробуйте инициализировать бота в чате командой '/start'.");
-
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/disable"))
-                        {
-                            if (chat != null)
-                            {
-                                chat.isActive = false;
-                                await botClient.SendTextMessageAsync(message.Chat, "Напоминания отключены. Для активации use '/start'.");
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/add"))
-                        {
-                            if (chat != null)
-                            {
-                                string[] requestString = messageText.Split(" ");
-                                await botClient.SendTextMessageAsync(message.Chat, "Функция в разработке.");
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/list"))
-                        {
-                            if (chat != null)
-                            {
-                                string responseMessage = "Список напоминаний:";
-                                foreach (var reminder in chat.reminders)
-                                    responseMessage += "\r\n" + $"Message: {reminder.Message}" + $"\r\n Id: {reminder.id}" + $"\r\n Время:{reminder.TimeRemind.Hour}:00" + ">>>>>>";
-
-                                await botClient.SendTextMessageAsync(message.Chat, responseMessage);
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/delete_all"))
-                        {
-                            if (chat != null)
-                            {
-                                chat.reminders.Clear();
-                                await botClient.SendTextMessageAsync(message.Chat, "Напоминания удалены.");
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/count"))
-                        {
-                            if (chat != null)
-                            {
-                                await botClient.SendTextMessageAsync(message.Chat, $"Количество напоминаний: {chat.reminders.Count}");
-                            }
-                        }
-                        else if (!string.IsNullOrEmpty(messageText) && messageText.Contains("/delete"))
-                        {
-                            if (chat != null)
-                            {
-                                string[] requestString = messageText.Split(" ");
-                                if (requestString.Length > 1)
+                                else
                                 {
-                                    var reminder = chat.reminders.Where(rem => rem.id == new Guid(requestString[1])).FirstOrDefault();
-                                    if (chat.reminders.Remove(reminder))
-                                        await botClient.SendTextMessageAsync(message.Chat, "Успешно удалено.");
-                                    else await botClient.SendTextMessageAsync(message.Chat, "Нет такого напоминания.");
+                                    UserBotCommandResult result = await botCommand.ExecuteCommand(chatId);
 
+                                    await botClient.SendTextMessageAsync(chatId, result.ResponseText);
                                 }
-                                else await botClient.SendTextMessageAsync(message.Chat, "Ошибка запроса.");
+                                
                             }
                         }
                     }
+                    else if (update.Type == UpdateType.ChatMember)
+                    {
+                        // Проверка на удаление бота из чата
+                        if (update.MyChatMember?.NewChatMember is ChatMemberBanned && update.MyChatMember?.NewChatMember.User.Id == bot.BotId)
+                        {
+                            IBotCommand botCommand = factoryBotCommand.CreateBotCommandDeleteBot();
+                            await botCommand.ExecuteCommand(update.MyChatMember.Chat.Id);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
             
         }
-
 
         public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
@@ -174,16 +113,16 @@ namespace ReminderTelegramBotConsole.Services
                 serverTime = DateTime.Now;
                 foreach (var chat in chats) 
                 {
-                    if (chat.isActive)
+                    /*if (chat.isActive)
                     {
                         foreach (var reminder in chat.reminders) reminder.IsReminder = false;
-                    }
+                    }*/
                 }
             }
 
             foreach(var chat in chats)
             {
-                if (chat.isActive)
+                /*if (chat.isActive)
                 {
                     foreach (var reminder in chat.reminders)
                     {
@@ -193,7 +132,7 @@ namespace ReminderTelegramBotConsole.Services
                             await bot.SendTextMessageAsync(new ChatId(chat.ChatId), reminder.Message);
                         }
                     }
-                }
+                }*/
             }
 
         }

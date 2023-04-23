@@ -1,4 +1,7 @@
-﻿using ReminderBotCore.Services;
+﻿using ReminderBotCore.Commands;
+using ReminderBotCore.Models;
+using ReminderBotCore.Services;
+using System;
 
 namespace ReminderBotCore.Core.Commands
 {
@@ -15,9 +18,53 @@ namespace ReminderBotCore.Core.Commands
 
         public IBotCommand CreateBotCommand(string requestString)
         {
-            // Тут должна быть реализация создания всех команд
-            return new BotCommandAddNotification(requestString, chatService);
-            throw new NotImplementedException();
+            if (requestString.Contains("/start"))
+            {
+                return new BotCommandStart(requestString, chatService);
+            }
+            else if (requestString.Contains("/defautl_settings"))
+            {
+                return new BotCommandDefaultReminders(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/disable_bot"))
+            {
+                return new BotCommandDisableAll(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/disable"))
+            {
+                return new BotCommandDisableNotification(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/add"))
+            {
+                return new BotCommandAddNotification(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/list"))
+            {
+                return new BotCommandGetListReminders(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/delete_all"))
+            {
+                return new BotCommandDeleteAllReminders(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/count"))
+            {
+                return new BotCommandGetCountList(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/delete"))
+            {
+                return new BotCommandDeleteReminder(requestString, chatService, reminderUnitService);
+            }
+            else return new BotCommandNotExist();
+        }
+
+        public IBotCommand CreateBotCommandDeleteBot()
+        {
+            return new CommandDeleteBot();
+        }
+
+        public IBotCommand CreateBotCommandReminder()
+        {
+            return new BotCommandReminder();
         }
     }
 }

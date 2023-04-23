@@ -2,18 +2,20 @@
 {
     public class ReminderUnit
     {
-        public string Name { get; set; }
         public Guid id { get; set; }
         public bool IsReminder { get; set; }
         public DateTime TimeRemind { get; set; }
         public string Message { get; set; }
 
-        public ReminderUnit(string name, DateTime date, string message) 
+        public int ReminderChatId { get; set; }
+        public ReminderChat Chat { get; set; }
+
+        public ReminderUnit(DateTime date, string message, ReminderChat chat) 
         {
             id = Guid.NewGuid();
-            Name = name;
             TimeRemind = date;
             Message = message;
+            Chat = chat;
 
             if (DateTime.Now.Hour >= TimeRemind.Hour)
             {
