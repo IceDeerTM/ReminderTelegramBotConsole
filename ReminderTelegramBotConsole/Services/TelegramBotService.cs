@@ -4,12 +4,10 @@ using Telegram.Bot.Polling;
 using System.Text.Json;
 using Telegram.Bot.Types.Enums;
 using ReminderBotCore.Models;
-using ReminderBotCore.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
-using ReminderBotCore.Core.Commands;
 using ReminderBotCore.Commands;
+using ReminderBotCore.CommandResults;
 
 namespace ReminderTelegramBotConsole.Services
 {
@@ -66,9 +64,9 @@ namespace ReminderTelegramBotConsole.Services
                                 }
                                 else
                                 {
-                                    UserBotCommandResult result = await botCommand.ExecuteCommand(chatId);
+                                    IUserBotCommandResult result = await botCommand.ExecuteCommand(chatId);
 
-                                    await botClient.SendTextMessageAsync(chatId, result.ResponseText);
+                                    await botClient.SendTextMessageAsync(chatId, result.Message);
                                 }
                                 
                             }
@@ -79,8 +77,8 @@ namespace ReminderTelegramBotConsole.Services
                         // Проверка на удаление бота из чата
                         if (update.MyChatMember?.NewChatMember is ChatMemberBanned && update.MyChatMember?.NewChatMember.User.Id == bot.BotId)
                         {
-                            IBotCommand botCommand = factoryBotCommand.CreateBotCommandDeleteBot();
-                            await botCommand.ExecuteCommand(update.MyChatMember.Chat.Id);
+                            ICommandDeleteBot botCommand = factoryBotCommand.CreateBotCommandDeleteBot();
+                            await botCommand.ExecuteCommandDelete(update.MyChatMember.Chat.Id);
                         }
                     }
                 }

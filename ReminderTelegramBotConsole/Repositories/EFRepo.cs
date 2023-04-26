@@ -5,12 +5,22 @@ namespace ReminderTelegramBotConsole.Repositories
 {
     public class EFRepo : IBotRepo
     {
+        public Task<ReminderChat> AddReminderChat(ReminderChat chat)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<ReminderUnit> AddReminderUnit(ReminderUnit reminderUnit)
         {
             throw new NotImplementedException();
         }
 
         public Task<ReminderUnit> DeleteReminder(ReminderUnit reminder)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ReminderChat> DeleteReminderChat(ReminderChat chat)
         {
             throw new NotImplementedException();
         }
@@ -31,6 +41,11 @@ namespace ReminderTelegramBotConsole.Repositories
         }
 
         public Task<List<ReminderUnit>> GetReminders(ReminderChat chat)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ReminderUnit> UpdateNotification(ReminderUnit reminder)
         {
             throw new NotImplementedException();
         }

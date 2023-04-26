@@ -1,14 +1,14 @@
-﻿using ReminderBotCore.Commands;
+﻿using ReminderBotCore.CommandResults;
 using ReminderBotCore.Models;
 using ReminderBotCore.Services;
 
-namespace ReminderBotCore.Core.Commands
+namespace ReminderBotCore.Commands
 {
     public abstract class BaseBotCommand : IBotCommand
     {
         public string RequestString { get; private set; }
-        private ReminderChatService chatService;
-        public ReminderChatService ChatService { get { return chatService; } private set { if (value != null) chatService = value; } }
+
+        public ReminderChatService ChatService { get; private set; }
 
         public BaseBotCommand(string requestString, ReminderChatService chatService)
         {
@@ -16,13 +16,12 @@ namespace ReminderBotCore.Core.Commands
             ChatService = chatService;
         }
 
-        public async Task<UserBotCommandResult> ExecuteCommand(long chatId)
+        public async Task<IUserBotCommandResult> ExecuteCommand(long chatId)
         {
-            ReminderChat? chat = await chatService.GetChat(chatId);
+            ReminderChat? chat = await ChatService.GetChat(chatId);
             return await ExecuteSubCommand(chatId, chat);
         }
 
-        public abstract Task<UserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat);
-
+        public abstract Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat);
     }
 }

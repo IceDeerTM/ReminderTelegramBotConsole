@@ -1,8 +1,8 @@
-﻿using ReminderBotCore.Commands;
+﻿using ReminderBotCore.CommandResults;
 using ReminderBotCore.Models;
 using ReminderBotCore.Services;
 
-namespace ReminderBotCore.Core.Commands
+namespace ReminderBotCore.Commands
 {
     public class BotCommandGetListReminders : BaseBotCommand
     {
@@ -12,7 +12,7 @@ namespace ReminderBotCore.Core.Commands
             this.reminderService = reminderService;
         }
 
-        public override async Task<UserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public override async Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
         {
             // Строка requetstString формата: /list
 
@@ -24,7 +24,7 @@ namespace ReminderBotCore.Core.Commands
                 for (int i = 0; i < reminders.Count; i++)
                 {
                     responseText += "\r\n";
-                    responseText += $"\r\n {i + 1}) {reminders[i].Message} {reminders[i].TimeRemind} {reminders[i].id}";
+                    responseText += $"\r\n {i + 1}) {reminders[i].Message} {reminders[i].TimeRemind} {reminders[i].Id}";
                 }
 
                 return new UserBotCommandResult(responseText);

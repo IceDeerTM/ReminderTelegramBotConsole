@@ -3,8 +3,8 @@ using ReminderBotCore.Models;
 
 namespace ReminderBotCore.Commands
 {
-    public interface IBotCommand
+    public interface ICommandDeleteBot
     {
-        public Task<IUserBotCommandResult> ExecuteCommand(long chatId);
+        public Task<IBotCommandResult> ExecuteCommandDelete(long chatId);
     }
 }

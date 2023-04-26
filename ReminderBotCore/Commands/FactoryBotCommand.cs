@@ -1,9 +1,10 @@
-﻿using ReminderBotCore.Commands;
+﻿using ReminderBotCore.CommandResults;
+using ReminderBotCore.Commands;
 using ReminderBotCore.Models;
 using ReminderBotCore.Services;
 using System;
 
-namespace ReminderBotCore.Core.Commands
+namespace ReminderBotCore.Commands
 {
     public class FactoryBotCommand : IFactoryBotCommand
     {
@@ -57,9 +58,9 @@ namespace ReminderBotCore.Core.Commands
             else return new BotCommandNotExist();
         }
 
-        public IBotCommand CreateBotCommandDeleteBot()
+        public ICommandDeleteBot CreateBotCommandDeleteBot()
         {
-            return new CommandDeleteBot();
+            return new CommandDeleteBot(chatService, reminderUnitService);
         }
 
         public IBotCommand CreateBotCommandReminder()

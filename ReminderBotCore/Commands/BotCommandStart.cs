@@ -1,9 +1,8 @@
-﻿using ReminderBotCore.Commands;
+﻿using ReminderBotCore.CommandResults;
 using ReminderBotCore.Models;
 using ReminderBotCore.Services;
-using System;
 
-namespace ReminderBotCore.Core.Commands
+namespace ReminderBotCore.Commands
 {
     public class BotCommandStart : BaseBotCommand
     {
@@ -11,7 +10,7 @@ namespace ReminderBotCore.Core.Commands
         {
         }
 
-        public async override Task<UserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public async override Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
         {
             // Строка requetstString формата: /start
 

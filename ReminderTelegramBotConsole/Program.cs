@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ReminderBotCore.Core.Commands;
+using ReminderBotCore.Commands;
 using ReminderBotCore.Repositories;
 using ReminderBotCore.Services;
 using ReminderTelegramBotConsole.Repositories;

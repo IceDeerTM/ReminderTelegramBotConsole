@@ -1,8 +1,8 @@
-﻿using ReminderBotCore.Commands;
+﻿using ReminderBotCore.CommandResults;
 using ReminderBotCore.Models;
 using ReminderBotCore.Services;
 
-namespace ReminderBotCore.Core.Commands
+namespace ReminderBotCore.Commands
 {
     public class BotCommandDisableAll : BaseBotCommand
     {
@@ -12,12 +12,12 @@ namespace ReminderBotCore.Core.Commands
             this.reminderService = reminderService;
         }
 
-        public async override Task<UserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public async override Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
         {
             // Строка requetstString формата: /disable_all
             if (chat != null)
             {
-                return new UserBotCommandResult("Все напоминания отключены.", await reminderService.DissableAllNotification(chat), ReminderStatus.Changed);
+                return new UserBotCommandResult("Все напоминания отключены.", await reminderService.ChangeModeAllNotification(chat, false), ReminderStatus.Changed);
             }
             else return new UserBotCommandResult("Неизвестная ошибка.Попробуйте /start.");
         }

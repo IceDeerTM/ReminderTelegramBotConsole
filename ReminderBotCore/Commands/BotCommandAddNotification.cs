@@ -1,8 +1,8 @@
 ﻿using ReminderBotCore.Services;
 using ReminderBotCore.Models;
-using ReminderBotCore.Commands;
+using ReminderBotCore.CommandResults;
 
-namespace ReminderBotCore.Core.Commands
+namespace ReminderBotCore.Commands
 {
     public class BotCommandAddNotification : BaseBotCommand
     {
@@ -12,7 +12,7 @@ namespace ReminderBotCore.Core.Commands
             this.reminderService = reminderService;
         }
 
-        public override async Task<UserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public override async Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
         {
             // Строка requetstString формата: /add message time
             // Пример: /add Встреча 12:00

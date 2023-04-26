@@ -1,18 +1,15 @@
-﻿using ReminderBotCore.Core.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ReminderBotCore.CommandResults;
+using ReminderBotCore.Core.Commands;
 
 namespace ReminderBotCore.Commands
 {
     public class BotCommandNotExist : IBotCommand
     {
-        public Task<UserBotCommandResult> ExecuteCommand(long chatId)
+        public Task<IUserBotCommandResult> ExecuteCommand(long chatId)
         {
             string responseText = "Такой команды не существует.";
-            return Task.FromResult(new UserBotCommandResult(responseText));
+            IUserBotCommandResult botCommandResult = new UserBotCommandResult(responseText);
+            return Task.FromResult(botCommandResult);
         }
     }
 }

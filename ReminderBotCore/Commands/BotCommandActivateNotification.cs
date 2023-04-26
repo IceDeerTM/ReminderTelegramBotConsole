@@ -4,24 +4,24 @@ using ReminderBotCore.Services;
 
 namespace ReminderBotCore.Commands
 {
-    public class BotCommandDisableNotification : BaseBotCommand
+    public class BotCommandActivateNotification : BaseBotCommand
     {
         private ReminderUnitService reminderService;
-        public BotCommandDisableNotification(string requestString, ReminderChatService chatService, ReminderUnitService reminderService) : base(requestString, chatService)
+        public BotCommandActivateNotification(string requestString, ReminderChatService chatService, ReminderUnitService reminderService) : base(requestString, chatService)
         {
             this.reminderService = reminderService;
         }
 
         public override async Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
         {
-            // Строка requetstString формата: /disable guid
-            // Пример: /disable 215gsahczx214fghfhd!
+            // Строка requetstString формата: /activate guid
+            // Пример: /activate 215gsahczx214fghfhd!
 
             string[] args = RequestString.Split(' ');
             if (args.Length == 2 && chat != null)
             {
-                var reminder = await reminderService.ChangeModeNotification(args[1], false);
-                return new UserBotCommandResult($"Напоминание {reminder.Message} отключено.", reminder, ReminderStatus.Changed);
+                var reminder = await reminderService.ChangeModeNotification(args[1], true);
+                return new UserBotCommandResult($"Напоминание {reminder.Message} включено.", reminder, ReminderStatus.Changed);
             }
             else if (args.Length != 2)
             {
