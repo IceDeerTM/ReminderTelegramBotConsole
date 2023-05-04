@@ -6,13 +6,13 @@ namespace ReminderBotCore.Commands
 {
     public class BotCommandAddNotification : BaseBotCommand
     {
-        private ReminderUnitService reminderService;
-        public BotCommandAddNotification(string requestString, ReminderChatService chatService, ReminderUnitService reminderService) : base(requestString, chatService) 
+        private IReminderUnitService reminderService;
+        public BotCommandAddNotification(string requestString, IReminderChatService chatService, IReminderUnitService reminderService) : base(requestString, chatService) 
         {
             this.reminderService = reminderService;
         }
 
-        public override async Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public override async Task<IUserBotCommandResult> ExecuteSubCommand(ChatCredentials chatCredentials, ReminderChat? chat)
         {
             // Строка requetstString формата: /add message time
             // Пример: /add Встреча 12:00

@@ -6,13 +6,13 @@ namespace ReminderBotCore.Commands
 {
     public class BotCommandDisableAll : BaseBotCommand
     {
-        private ReminderUnitService reminderService;
-        public BotCommandDisableAll(string requestString, ReminderChatService chatService, ReminderUnitService reminderService) : base(requestString, chatService)
+        private IReminderUnitService reminderService;
+        public BotCommandDisableAll(string requestString, IReminderChatService chatService, IReminderUnitService reminderService) : base(requestString, chatService)
         {
             this.reminderService = reminderService;
         }
 
-        public async override Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public async override Task<IUserBotCommandResult> ExecuteSubCommand(ChatCredentials chatCredentials, ReminderChat? chat)
         {
             // Строка requetstString формата: /disable_all
             if (chat != null)

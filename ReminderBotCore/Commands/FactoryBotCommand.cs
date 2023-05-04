@@ -8,13 +8,13 @@ namespace ReminderBotCore.Commands
 {
     public class FactoryBotCommand : IFactoryBotCommand
     {
-        private ReminderChatService chatService;
-        private ReminderUnitService reminderUnitService;
+        private IReminderChatService chatService;
+        private IReminderUnitService reminderUnitService;
 
-        public FactoryBotCommand(ReminderChatService chatService, ReminderUnitService reminderUnitService)
+        public FactoryBotCommand(IReminderChatService chatService, IReminderUnitService reminderService)
         {
             this.chatService = chatService;
-            this.reminderUnitService = reminderUnitService;
+            this.reminderUnitService = reminderService;
         }
 
         public IBotCommand CreateBotCommand(string requestString)
@@ -23,11 +23,11 @@ namespace ReminderBotCore.Commands
             {
                 return new BotCommandStart(requestString, chatService);
             }
-            else if (requestString.Contains("/defautl_settings"))
+            else if (requestString.Contains("/default_reminders"))
             {
                 return new BotCommandDefaultReminders(requestString, chatService, reminderUnitService);
             }
-            else if (requestString.Contains("/disable_bot"))
+            else if (requestString.Contains("/disable_all"))
             {
                 return new BotCommandDisableAll(requestString, chatService, reminderUnitService);
             }
@@ -47,13 +47,13 @@ namespace ReminderBotCore.Commands
             {
                 return new BotCommandDeleteAllReminders(requestString, chatService, reminderUnitService);
             }
-            else if (requestString.Contains("/count"))
-            {
-                return new BotCommandGetCountList(requestString, chatService, reminderUnitService);
-            }
             else if (requestString.Contains("/delete"))
             {
                 return new BotCommandDeleteReminder(requestString, chatService, reminderUnitService);
+            }
+            else if (requestString.Contains("/count"))
+            {
+                return new BotCommandGetCountList(requestString, chatService, reminderUnitService);
             }
             else return new BotCommandNotExist();
         }
@@ -63,9 +63,9 @@ namespace ReminderBotCore.Commands
             return new CommandDeleteBot(chatService, reminderUnitService);
         }
 
-        public IBotCommand CreateBotCommandReminder()
+        public IBotCommandReminder CreateBotCommandReminder(ISenderMessage senderMessage)
         {
-            return new BotCommandReminder();
+            return new BotCommandReminder(chatService, reminderUnitService, senderMessage);
         }
     }
 }

@@ -6,13 +6,13 @@ namespace ReminderBotCore.Commands
 {
     public class BotCommandGetListReminders : BaseBotCommand
     {
-        private ReminderUnitService reminderService;
-        public BotCommandGetListReminders(string requestString, ReminderChatService chatService, ReminderUnitService reminderService) : base(requestString, chatService)
+        private IReminderUnitService reminderService;
+        public BotCommandGetListReminders(string requestString, IReminderChatService chatService, IReminderUnitService reminderService) : base(requestString, chatService)
         {
             this.reminderService = reminderService;
         }
 
-        public override async Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public override async Task<IUserBotCommandResult> ExecuteSubCommand(ChatCredentials chatCredentials, ReminderChat? chat)
         {
             // Строка requetstString формата: /list
 
@@ -24,7 +24,7 @@ namespace ReminderBotCore.Commands
                 for (int i = 0; i < reminders.Count; i++)
                 {
                     responseText += "\r\n";
-                    responseText += $"\r\n {i + 1}) {reminders[i].Message} {reminders[i].TimeRemind} {reminders[i].Id}";
+                    responseText += $"\r\n {i + 1}) {reminders[i].Message} {reminders[i].TimeRemind} {reminders[i].UId}";
                 }
 
                 return new UserBotCommandResult(responseText);

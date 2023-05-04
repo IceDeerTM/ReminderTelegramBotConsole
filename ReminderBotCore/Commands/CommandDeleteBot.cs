@@ -1,24 +1,28 @@
 ﻿using ReminderBotCore.CommandResults;
-using ReminderBotCore.Core.Commands;
+using ReminderBotCore.Commands;
 using ReminderBotCore.Models;
 using ReminderBotCore.Services;
 
 namespace ReminderBotCore.Commands
 {
-    internal class CommandDeleteBot : ICommandDeleteBot // Пока не продумал как реализовывать
+    internal class CommandDeleteBot : ICommandDeleteBot
     {
-        public ReminderChatService ChatService { get; private set; }
-        public ReminderUnitService ReminderService { get; private set; }
+        public IReminderChatService ChatService { get; private set; }
+        public IReminderUnitService ReminderService { get; private set; }
 
-        public CommandDeleteBot(ReminderChatService chatService, ReminderUnitService reminderService) 
+        public CommandDeleteBot(IReminderChatService chatService, IReminderUnitService reminderService) 
         {
             ChatService = chatService;
             ReminderService = reminderService;
         }
 
-        public Task<IBotCommandResult> ExecuteCommandDelete(long chatId)
+        public async Task<IBotCommandResult> ExecuteCommandDelete(ChatCredentials chatCredentials)
         {
-            throw new NotImplementedException();
+            var chat = await ChatService.GetChat(chatCredentials.ChatId);
+
+            var reminders = await ReminderService.DeleteAllReminders(chat);
+
+            return new BotCommandDeleteBotResult(reminders);
         }
 
     }

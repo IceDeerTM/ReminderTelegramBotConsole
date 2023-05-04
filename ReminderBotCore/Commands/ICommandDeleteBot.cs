@@ -5,6 +5,6 @@ namespace ReminderBotCore.Commands
 {
     public interface ICommandDeleteBot
     {
-        public Task<IBotCommandResult> ExecuteCommandDelete(long chatId);
+        public Task<IBotCommandResult> ExecuteCommandDelete(ChatCredentials chatCredentials);
     }
 }

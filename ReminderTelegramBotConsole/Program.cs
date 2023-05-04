@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ReminderBotCore.Commands;
+using ReminderBotCore.Models;
 using ReminderBotCore.Repositories;
 using ReminderBotCore.Services;
-using ReminderTelegramBotConsole.Repositories;
+using ReminderTelegramBotConsole.Repositories.EF;
 using ReminderTelegramBotConsole.Services;
 using ReminderTelegramBotConsole.Utils;
 
@@ -16,10 +18,10 @@ namespace ReminderTelegramBotConsole
         {
             IHostBuilder builder = Host.CreateDefaultBuilder().ConfigureServices((context, services) =>
             {
-
+                services.AddDbContext<BotDbContext>(options => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Trusted_Connection=True;Database=TestBot2;"));
                 services.AddSingleton<IBotRepo, EFRepo>();
-                services.AddSingleton<ReminderUnitService>();
-                services.AddSingleton<ReminderChatService>();
+                services.AddSingleton<IReminderUnitService, ReminderUnitService>();
+                services.AddSingleton<IReminderChatService, ReminderChatService>();
                 services.AddSingleton<IFactoryBotCommand, FactoryBotCommand>();
                 services.AddTransient<ILogger, FileLogger>();
                 services.AddSingleton<TelegramBotService>();
@@ -30,7 +32,7 @@ namespace ReminderTelegramBotConsole
 
             app.Start();
 
-            while(true)
+            while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey();
 

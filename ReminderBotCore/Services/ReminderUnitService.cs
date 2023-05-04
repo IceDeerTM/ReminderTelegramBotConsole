@@ -6,9 +6,9 @@ namespace ReminderBotCore.Services
     /// <summary>
     /// Слой сервиса для модели ReminderUnit
     /// </summary>
-    public class ReminderUnitService
+    public class ReminderUnitService : IReminderUnitService
     {
-        private IBotRepo dbRepo;
+        public IBotRepo dbRepo { get; private set; }
 
         public ReminderUnitService(IBotRepo dbRepo)
         {
@@ -20,7 +20,7 @@ namespace ReminderBotCore.Services
             List<ReminderUnit> defaultReminders = new List<ReminderUnit>() {
                 new ReminderUnit(new DateTime(2023, 04, 30, 12, 00, 00), "Охота", chat),
                 new ReminderUnit(new DateTime(2023, 04, 30, 20, 00, 00), "Царь", chat),
-                new ReminderUnit(new DateTime(2023, 04, 30, 22, 00, 00), "Повозки", chat)
+                new ReminderUnit(new DateTime(2023, 04, 30, 22, 00, 00), "Повозки", chat),
             };
 
             defaultReminders = await GetUpdatedListFromRepo(AddReminderUnit, defaultReminders);
@@ -93,6 +93,16 @@ namespace ReminderBotCore.Services
         public async Task<ReminderUnit> GetReminderByGuid(string id)
         {
             return await dbRepo.GetReminderByGuid(id);
+        }
+
+        public async Task<ReminderUnit> UpdateNotification(ReminderUnit reminder)
+        {
+            return await dbRepo.UpdateNotification(reminder);
+        }
+
+        public async Task<List<ReminderUnit>> GetRemindersForHour(DateTime dateTime)
+        {
+            return await dbRepo.GetRemindersForHour(dateTime);
         }
 
         public async Task<List<ReminderUnit>> GetUpdatedListFromRepo(Func<ReminderUnit, Task<ReminderUnit>> func, IEnumerable<ReminderUnit> collection)

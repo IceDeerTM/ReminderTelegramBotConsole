@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using ReminderBotCore.Commands;
 using ReminderBotCore.CommandResults;
+using ReminderBotCore.Services;
 
 namespace ReminderTelegramBotConsole.Services
 {
@@ -22,19 +23,22 @@ namespace ReminderTelegramBotConsole.Services
             }
         }
 
-        private List<ReminderChat> chats = new List<ReminderChat>();
         private ITelegramBotClient bot;
-        private DateTime serverTime = DateTime.Now;
         private ILogger? logger;
         private IFactoryBotCommand factoryBotCommand;
-
+        private IBotCommandReminder commandReminder;
+        private ISenderMessage senderMessage;
 
         public TelegramBotService(IConfiguration configuration, ILogger logger, IFactoryBotCommand factoryBotCommand)
         {
+            this.factoryBotCommand = factoryBotCommand;
+            
             this.logger = logger;
             string botToken = "";
             this.logger?.LogInformation(configuration.ToString());
             bot = new TelegramBotClient(botToken);
+            senderMessage = new TelegramSenderMessage(bot);
+            commandReminder = factoryBotCommand.CreateBotCommandReminder(senderMessage);
         }
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -64,7 +68,10 @@ namespace ReminderTelegramBotConsole.Services
                                 }
                                 else
                                 {
-                                    IUserBotCommandResult result = await botCommand.ExecuteCommand(chatId);
+                                    ChatCredentials chatCredentials = new ChatCredentials(update.Message.Chat.Id.ToString(), update.Message.Chat.Username);
+                                    IUserBotCommandResult result = await botCommand.ExecuteCommand(chatCredentials);
+
+                                    commandReminder.Update(result);
 
                                     await botClient.SendTextMessageAsync(chatId, result.Message);
                                 }
@@ -78,7 +85,9 @@ namespace ReminderTelegramBotConsole.Services
                         if (update.MyChatMember?.NewChatMember is ChatMemberBanned && update.MyChatMember?.NewChatMember.User.Id == bot.BotId)
                         {
                             ICommandDeleteBot botCommand = factoryBotCommand.CreateBotCommandDeleteBot();
-                            await botCommand.ExecuteCommandDelete(update.MyChatMember.Chat.Id);
+                            ChatCredentials chatCredentials = new ChatCredentials(update.MyChatMember.Chat.Id.ToString(), update.MyChatMember.Chat.Username);
+                            var commandResult = await botCommand.ExecuteCommandDelete(chatCredentials);
+                            commandReminder.Update(commandResult);
                         }
                     }
                 }
@@ -103,36 +112,9 @@ namespace ReminderTelegramBotConsole.Services
             await bot.CloseAsync();
         }
 
-        public async Task CheckTime()
+        public async Task ExecutePushNotification()
         {
-            var currentDay = DateTime.Now.Day;
-            if ((currentDay > serverTime.Day) || ((currentDay == 1) && (currentDay < serverTime.Day))) // Наступил ли следующий день?
-            {
-                serverTime = DateTime.Now;
-                foreach (var chat in chats) 
-                {
-                    /*if (chat.isActive)
-                    {
-                        foreach (var reminder in chat.reminders) reminder.IsReminder = false;
-                    }*/
-                }
-            }
-
-            foreach(var chat in chats)
-            {
-                /*if (chat.isActive)
-                {
-                    foreach (var reminder in chat.reminders)
-                    {
-                        DateTime now = DateTime.Now;
-                        if (reminder.isSendNotification(now))
-                        {
-                            await bot.SendTextMessageAsync(new ChatId(chat.ChatId), reminder.Message);
-                        }
-                    }
-                }*/
-            }
-
+            await commandReminder.ExecuteCommand();
         }
 
     }

@@ -32,7 +32,7 @@ namespace ReminderTelegramBotConsole
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(60000);
-                await telegramBotService.CheckTime();
+                await telegramBotService.ExecutePushNotification();
             }
 
             await telegramBotService.Close();

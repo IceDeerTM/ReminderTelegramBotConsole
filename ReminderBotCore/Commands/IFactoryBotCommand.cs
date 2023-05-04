@@ -1,6 +1,4 @@
-﻿using ReminderBotCore.CommandResults;
-using ReminderBotCore.Commands;
-using ReminderBotCore.Models;
+﻿using ReminderBotCore.Services;
 
 namespace ReminderBotCore.Commands
 {
@@ -8,7 +6,6 @@ namespace ReminderBotCore.Commands
     {
         public IBotCommand CreateBotCommand(string requestString);
         public ICommandDeleteBot CreateBotCommandDeleteBot();
-        public IBotCommand CreateBotCommandReminder();
-        public IBotCommand CreateBotCommandChangeIsReminder();
+        public IBotCommandReminder CreateBotCommandReminder(ISenderMessage senderMessage);
     }
 }

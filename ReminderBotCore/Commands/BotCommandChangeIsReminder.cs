@@ -6,17 +6,32 @@ namespace ReminderBotCore.Commands
 {
     internal class BotCommandChangeIsReminder : IBotCommand
     {
-        public ReminderChatService ChatService { get; private set; }
-        public ReminderUnitService ReminderService { get; private set; }
-        public BotCommandChangeIsReminder(ReminderChatService chatService, ReminderUnitService reminderService)
+        public IReminderChatService ChatService { get; private set; }
+        public IReminderUnitService ReminderService { get; private set; }
+        public ISenderMessage SenderMessage { get; private set; }
+
+        public BotCommandChangeIsReminder(IReminderChatService chatService, IReminderUnitService reminderService, ISenderMessage senderMessage)
         {
             ChatService = chatService;
             ReminderService = reminderService;
+            SenderMessage = senderMessage;
         }
 
-        public Task<IUserBotCommandResult> ExecuteCommand(long chatId)
+        public async Task<IUserBotCommandResult> ExecuteCommand(ChatCredentials chatCredentials)
         {
-            throw new NotImplementedException();
+            List<ReminderChat> chats = await ChatService.GetChats();
+
+            foreach(ReminderChat chat in chats)
+            {
+                List<ReminderUnit> reminderUnits= new List<ReminderUnit>();
+
+                foreach(ReminderUnit unit in reminderUnits)
+                {
+                    unit.IsReminder = false;
+                    _ = await ReminderService.UpdateNotification(unit);
+                }
+            }
+            return new UserBotCommandResult("Выполнено.");
         }
     }
 

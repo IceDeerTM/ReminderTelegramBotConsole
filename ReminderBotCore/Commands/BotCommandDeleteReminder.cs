@@ -6,13 +6,13 @@ namespace ReminderBotCore.Commands
 {
     public class BotCommandDeleteReminder : BaseBotCommand
     {
-        private ReminderUnitService reminderService;
-        public BotCommandDeleteReminder(string requestString, ReminderChatService chatService, ReminderUnitService reminderService) : base(requestString, chatService)
+        private IReminderUnitService reminderService;
+        public BotCommandDeleteReminder(string requestString, IReminderChatService chatService, IReminderUnitService reminderService) : base(requestString, chatService)
         {
             this.reminderService = reminderService;
         }
 
-        public override async Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat)
+        public override async Task<IUserBotCommandResult> ExecuteSubCommand(ChatCredentials chatCredentials, ReminderChat? chat)
         {
             // Строка requetstString формата: /delete guid
             // Пример: /delete 215gsahczx214fghfhd!

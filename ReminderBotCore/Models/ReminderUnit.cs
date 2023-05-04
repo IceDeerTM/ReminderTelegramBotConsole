@@ -3,12 +3,12 @@
     /// <summary>
     /// Модель напоминалки.
     /// </summary>
-    public class ReminderUnit
+    public class ReminderUnit : BaseEntity
     {
         /// <summary>
         /// Уникальный идентификатор напоминания.
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid UId { get; set; }
 
         /// <summary>
         /// Идентификатор выполнения напоминания, если true - то напоминание было выполнено.
@@ -38,16 +38,21 @@
         /// <summary>
         /// Чат, к которому привязано напоминание.
         /// </summary>
-        public ReminderChat Chat { get; set; }
+        public ReminderChat ReminderChat { get; set; }
+
+        public ReminderUnit() // Без конструктора по умолчанию не создается бд
+        {
+
+        }
 
         public ReminderUnit(DateTime date, string message, ReminderChat chat) 
         {
-            Id = Guid.NewGuid();
+            UId = Guid.NewGuid();
             TimeRemind = date;
             Message = message;
-            Chat = chat;
+            ReminderChat = chat;
             isActive = true;
-
+            
             if (DateTime.Now.Hour >= TimeRemind.Hour)
             {
                 if (DateTime.Now.Minute >= TimeRemind.Minute) 
@@ -55,6 +60,7 @@
             }
         }
 
+        
         public bool isSendNotification(DateTime now)
         {
             if (!IsReminder)

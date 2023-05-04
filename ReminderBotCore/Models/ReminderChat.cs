@@ -3,22 +3,27 @@
     /// <summary>
     /// Модель чата
     /// </summary>
-    public class ReminderChat
+    public class ReminderChat : BaseEntity
     {
         /// <summary>
-        /// Идентификатор чата(в частности в ТГ это long)
+        /// Идентификатор чата
         /// </summary>
-        public long ChatId { get; set; }
+        public string ChatId { get; set; }
+
+        /// <summary>
+        /// Название чата
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
         /// Список напоминаний, привязанных к чату
         /// </summary>
-        public List<ReminderUnit> Reminders { get; set; }
+        public List<ReminderUnit> Reminders { get; set; } = new List<ReminderUnit>();
 
-        public ReminderChat(long chatId)
+        public ReminderChat(string chatId, string? name)
         {
-            Reminders= new List<ReminderUnit>();
             ChatId = chatId;
+            Name = name != null? name: "";
         }
     }
 }

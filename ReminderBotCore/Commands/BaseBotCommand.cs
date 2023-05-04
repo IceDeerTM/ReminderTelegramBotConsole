@@ -8,20 +8,20 @@ namespace ReminderBotCore.Commands
     {
         public string RequestString { get; private set; }
 
-        public ReminderChatService ChatService { get; private set; }
+        public IReminderChatService ChatService { get; private set; }
 
-        public BaseBotCommand(string requestString, ReminderChatService chatService)
+        public BaseBotCommand(string requestString, IReminderChatService chatService)
         {
             RequestString = requestString;
             ChatService = chatService;
         }
 
-        public async Task<IUserBotCommandResult> ExecuteCommand(long chatId)
+        public async Task<IUserBotCommandResult> ExecuteCommand(ChatCredentials chatCredentials)
         {
-            ReminderChat? chat = await ChatService.GetChat(chatId);
-            return await ExecuteSubCommand(chatId, chat);
+            ReminderChat? chat = await ChatService.GetChat(chatCredentials.ChatId);
+            return await ExecuteSubCommand(chatCredentials, chat);
         }
 
-        public abstract Task<IUserBotCommandResult> ExecuteSubCommand(long chatId, ReminderChat? chat);
+        public abstract Task<IUserBotCommandResult> ExecuteSubCommand(ChatCredentials chatCredentials, ReminderChat? chat);
     }
 }
