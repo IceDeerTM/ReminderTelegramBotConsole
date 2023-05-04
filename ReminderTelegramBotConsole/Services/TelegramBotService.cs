@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using ReminderBotCore.Commands;
 using ReminderBotCore.CommandResults;
 using ReminderBotCore.Services;
+using System;
 
 namespace ReminderTelegramBotConsole.Services
 {
@@ -34,6 +35,7 @@ namespace ReminderTelegramBotConsole.Services
             this.factoryBotCommand = factoryBotCommand;
             
             this.logger = logger;
+            logger?.LogCritical("Server started.");
             string botToken = "";
             this.logger?.LogInformation(configuration.ToString());
             bot = new TelegramBotClient(botToken);
@@ -68,7 +70,11 @@ namespace ReminderTelegramBotConsole.Services
                                 }
                                 else
                                 {
-                                    ChatCredentials chatCredentials = new ChatCredentials(update.Message.Chat.Id.ToString(), update.Message.Chat.Username);
+                                    string name = "";
+                                    if (update.Message.Chat.Type == ChatType.Private) name = update.Message.Chat.FirstName;
+                                    else name = update.Message.Chat.Title;
+
+                                    ChatCredentials chatCredentials = new ChatCredentials(update.Message.Chat.Id.ToString(), name);
                                     IUserBotCommandResult result = await botCommand.ExecuteCommand(chatCredentials);
 
                                     commandReminder.Update(result);
@@ -93,7 +99,8 @@ namespace ReminderTelegramBotConsole.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    this.logger?.LogCritical(ex.ToString());
+                    Console.WriteLine(ex.ToString());
                 }
             }
             
@@ -101,8 +108,8 @@ namespace ReminderTelegramBotConsole.Services
 
         public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            Console.WriteLine(exception.Message);
-            this.logger?.LogCritical(exception.Message);
+            Console.WriteLine(exception.ToString());
+            this.logger?.LogCritical(exception.ToString());
             return Task.CompletedTask;
         }
 

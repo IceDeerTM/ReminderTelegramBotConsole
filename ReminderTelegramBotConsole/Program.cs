@@ -18,7 +18,7 @@ namespace ReminderTelegramBotConsole
         {
             IHostBuilder builder = Host.CreateDefaultBuilder().ConfigureServices((context, services) =>
             {
-                services.AddDbContext<BotDbContext>(options => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Trusted_Connection=True;Database=TestBot2;"));
+                services.AddDbContext<BotDbContext>(options => options.UseMySql("connectionString", new MySqlServerVersion(Version.Parse("10.0.38"))));
                 services.AddSingleton<IBotRepo, EFRepo>();
                 services.AddSingleton<IReminderUnitService, ReminderUnitService>();
                 services.AddSingleton<IReminderChatService, ReminderChatService>();
@@ -34,13 +34,6 @@ namespace ReminderTelegramBotConsole
 
             while (true)
             {
-                ConsoleKeyInfo key = Console.ReadKey();
-
-                if (key.Key == ConsoleKey.Escape)
-                {
-                    Console.WriteLine("Приложение закрывается.");
-                    break;
-                }
             }
         }
     }

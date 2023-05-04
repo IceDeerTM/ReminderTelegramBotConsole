@@ -39,9 +39,10 @@ namespace ReminderBotCore.Commands
                 Update();
             }
 
-            foreach(var reminder in _reminders)
+            foreach (var reminder in _reminders)
             {
-                if (reminder.TimeRemind.Minute >= currentTime.Minute)
+                var difference = currentTime.Minute - reminder.TimeRemind.Minute;
+                if (reminder.TimeRemind.Minute == currentTime.Minute || (difference == 1))
                 {
                     SenderMessage?.SendMessage(reminder.ReminderChat.ChatId, reminder.Message);
                     reminder.IsReminder = true;

@@ -21,7 +21,7 @@ namespace ReminderBotCore.Commands
 
             if (args.Length == 3 && chat != null)
             {
-                ReminderUnit addingReminder = new ReminderUnit(DateTime.Parse(args[1]), args[2], chat);
+                ReminderUnit addingReminder = new ReminderUnit(DateTime.Parse(args[2]), args[1], chat);
                 return new UserBotCommandResult("Напоминание успешно добавлено.", await reminderService.AddReminderUnit(addingReminder), ReminderStatus.Added);
             }
             else if (chat == null) return new UserBotCommandResult("Неизвестная ошибка.Попробуйте /start.");
