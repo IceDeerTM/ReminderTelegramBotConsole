@@ -32,9 +32,7 @@ namespace ReminderTelegramBotConsole
 
             app.Start();
 
-            while (true)
-            {
-            }
+            app.WaitForShutdown();
         }
     }
 }
