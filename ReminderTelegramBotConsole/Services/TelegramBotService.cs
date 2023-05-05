@@ -85,7 +85,7 @@ namespace ReminderTelegramBotConsole.Services
                             }
                         }
                     }
-                    else if (update.Type == UpdateType.ChatMember)
+                    else if (update.Type == UpdateType.MyChatMember)
                     {
                         // Проверка на удаление бота из чата
                         if (update.MyChatMember?.NewChatMember is ChatMemberBanned && update.MyChatMember?.NewChatMember.User.Id == bot.BotId)

@@ -39,15 +39,18 @@ namespace ReminderBotCore.Commands
                 Update();
             }
 
-            foreach (var reminder in _reminders)
+            for (int i = 0; i < _reminders.Count; i++)
             {
+                var reminder = _reminders[i];
                 var difference = currentTime.Minute - reminder.TimeRemind.Minute;
                 if (reminder.TimeRemind.Minute == currentTime.Minute || (difference == 1))
                 {
-                    SenderMessage?.SendMessage(reminder.ReminderChat.ChatId, reminder.Message);
+                    if (SenderMessage != null) await SenderMessage.SendMessage(reminder.ReminderChat.ChatId, reminder.Message);
+
                     reminder.IsReminder = true;
-                    _ = await ReminderService.UpdateNotification(reminder);
+                    await ReminderService.UpdateNotification(reminder);
                     _reminders.Remove(reminder);
+                    i--;
                 }
             }
         }
