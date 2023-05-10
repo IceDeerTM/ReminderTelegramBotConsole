@@ -27,6 +27,7 @@ namespace ReminderBotCore.Commands
         public async Task ExecuteCommand()
         {
             DateTime currentTime = DateTime.Now;
+
             if ((currentTime.Day > serverTime.Day) || ((currentTime.Day == 1) && (currentTime.Day < serverTime.Day))) // Наступил ли следующий день?
             {
                 serverTime = DateTime.Now;
@@ -60,8 +61,8 @@ namespace ReminderBotCore.Commands
             List<ReminderChat> chats = await ChatService.GetChats();
 
             foreach (ReminderChat chat in chats)
-            {
-                List<ReminderUnit> reminderUnits = new List<ReminderUnit>();
+            {   
+                List<ReminderUnit> reminderUnits = await ReminderService.GetReminders(chat);
 
                 foreach (ReminderUnit unit in reminderUnits)
                 {
@@ -75,7 +76,6 @@ namespace ReminderBotCore.Commands
         private async void Update()
         {
             _reminders = await ReminderService.GetRemindersForHour(everyClock);
-            int x = 5;
         }
 
         public void Update(IBotCommandResult commandResult)
